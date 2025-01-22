@@ -6,6 +6,43 @@ import time
 from datetime import datetime
 import random
 
+import sqlite3
+
+def init_db():
+    conn = sqlite3.connect('device_access.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS device_access (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            device_id TEXT NOT NULL,
+            access_time INTEGER NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_db()
+
+import sqlite3
+
+def add_device_access(device_id, access_time):
+    print("Adding device access")
+    conn = sqlite3.connect('device_access.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO device_access (device_id, access_time) VALUES (?, ?)', (device_id, access_time))
+    conn.commit()
+    conn.close()
+
+def get_device_access_count(device_id, current_time):
+    conn = sqlite3.connect('device_access.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM device_access WHERE access_time < ?', (current_time - 86400000,))
+    conn.commit()
+    cursor.execute('SELECT COUNT(*) FROM device_access WHERE device_id = ?', (device_id,))
+    count = cursor.fetchone()[0]
+    conn.close()
+    return count
+
 app = Flask(__name__)
 CORS(app)
 
@@ -56,22 +93,15 @@ def decrypt_payload():
         return jsonify({'error': str(e)}), 500
 
     current_time = int(time.time() * 1000)
+    add_device_access(decrypted_device_id, current_time)
     if current_time > int(decrypted_time):
         return jsonify({'error': 'Timestamp expired'}), 400
 
-    if decrypted_device_id not in device_access_times:
-        device_access_times[decrypted_device_id] = []
-
-    # Clean up old entries
-    device_access_times[decrypted_device_id] = [
-        timestamp for timestamp in device_access_times[decrypted_device_id]
-        if current_time - timestamp < 60000
-    ]
-
-    if len(device_access_times[decrypted_device_id]) >= 20:
+    access_count = get_device_access_count(decrypted_device_id, current_time)
+    if access_count >= 20:
         return jsonify({'error': 'API access limit reached'}), 429
 
-    device_access_times[decrypted_device_id].append(current_time)
+
 
     selected_quote = random.choice(quotes)
 
