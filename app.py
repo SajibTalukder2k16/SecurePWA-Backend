@@ -65,7 +65,7 @@ def is_hex(s):
     except ValueError:
         return False
 
-def decrypt(encrypted_text):
+def decrypt_v0(encrypted_text):
     if not is_hex(encrypted_text):
         raise ValueError("Non-base16 digit found in encrypted text")
 
@@ -80,6 +80,24 @@ quotes = [
     {"quote": "Get busy living or get busy dying.", "author": "Stephen King"},
     {"quote": "You have within you right now, everything you need to deal with whatever the world can throw at you.", "author": "Brian Tracy"}
 ]
+
+from Crypto.Util.Padding import unpad  # Import unpad function
+
+def decrypt(encrypted_text):
+    if not is_hex(encrypted_text):
+        raise ValueError("Non-base16 digit found in encrypted text")
+
+    cipher = AES.new(SECRET_KEY, AES.MODE_CBC, IV)
+    decrypted = cipher.decrypt(base64.b16decode(encrypted_text.upper()))
+
+    # Properly remove AES PKCS7 padding
+    try:
+        decrypted = unpad(decrypted, AES.block_size)  # Remove padding
+    except ValueError:
+        raise ValueError("Decryption error: Invalid padding")
+
+    return decrypted.decode('utf-8').strip()  #
+
 @app.route('/getQuote', methods=['POST'])
 def decrypt_payload():
     data = request.json
@@ -91,12 +109,18 @@ def decrypt_payload():
         return jsonify({'error': 'Invalid payload'}), 400
 
     try:
-        decrypted_time = decrypt(encryptMsg)
-        decrypted_device_id = decrypt(encryptID)
+        decrypted_time = decrypt(encryptMsg).strip()
+        decrypted_device_id = decrypt(encryptID).strip()
+        print(f"Decrypted Device ID: {decrypted_device_id}")
+        print(f"Decrypted Timestamp: {decrypted_time}")
     except Exception as e:
         return jsonify({'error': 'Invalid device ID or timestamp'}), 400
 
     current_time = int(time.time() * 1000)
+    print(type(decrypted_time))
+    print(type(current_time))
+    print(len(decrypted_time))
+    print(len(str(current_time)))
     if current_time > int(decrypted_time):
         return jsonify({'error': 'Timestamp expired'}), 400
 
