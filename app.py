@@ -111,16 +111,16 @@ def decrypt_payload():
     try:
         decrypted_time = decrypt(encryptMsg).strip()
         decrypted_device_id = decrypt(encryptID).strip()
-        print(f"Decrypted Device ID: {decrypted_device_id}")
-        print(f"Decrypted Timestamp: {decrypted_time}")
+        #print(f"Decrypted Device ID: {decrypted_device_id}")
+        #print(f"Decrypted Timestamp: {decrypted_time}")
     except Exception as e:
         return jsonify({'error': 'Invalid device ID or timestamp'}), 400
 
     current_time = int(time.time() * 1000)
-    print(type(decrypted_time))
-    print(type(current_time))
-    print(len(decrypted_time))
-    print(len(str(current_time)))
+    #print(type(decrypted_time))
+    #print(type(current_time))
+    #print(len(decrypted_time))
+    #print(len(str(current_time)))
     if current_time > int(decrypted_time):
         return jsonify({'error': 'Timestamp expired'}), 400
 
