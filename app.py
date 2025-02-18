@@ -114,7 +114,7 @@ def decrypt_payload():
         #print(f"Decrypted Device ID: {decrypted_device_id}")
         #print(f"Decrypted Timestamp: {decrypted_time}")
     except Exception as e:
-        return jsonify({'error': 'Invalid device ID or timestamp'}), 400
+        return jsonify({'error': 'Invalid Data'}), 400
 
     current_time = int(time.time() * 1000)
     #print(type(decrypted_time))
@@ -122,7 +122,7 @@ def decrypt_payload():
     #print(len(decrypted_time))
     #print(len(str(current_time)))
     if current_time > int(decrypted_time):
-        return jsonify({'error': 'Timestamp expired'}), 400
+        return jsonify({'error': 'Expired'}), 400
 
     conn = sqlite3.connect('device_access.db')
     cursor = conn.cursor()
@@ -131,7 +131,7 @@ def decrypt_payload():
     conn.close()
 
     if count > 0 and not reSubmit:
-        return jsonify({'error': 'Exists'}), 400
+        return jsonify({'error': 'Already Existing Data'}), 400
 
     access_count = get_device_access_count(decrypted_device_id, current_time)
     if access_count >= API_REQUEST_LIMIT:
@@ -150,8 +150,6 @@ def decrypt_payload():
 
     return jsonify({
         'message': 'Success',
-        'device_id': decrypted_device_id,
-        'timestamp': decrypted_time,
         'quote': selected_quote['quote'],
         'writer': selected_quote['author']
     })
