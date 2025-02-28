@@ -91,18 +91,20 @@ def decrypt(encrypted_text):
     decrypted = cipher.decrypt(base64.b16decode(encrypted_text.upper()))
 
     # Properly remove AES PKCS7 padding
-    try:
-        decrypted = unpad(decrypted, AES.block_size)  # Remove padding
-    except ValueError:
-        raise ValueError("Decryption error: Invalid padding")
+    #try:
+    #decrypted = unpad(decrypted, AES.block_size)  # Remove padding
+    # except ValueError:
+    #     raise ValueError("Decryption error: Invalid padding")
 
     return decrypted.decode('utf-8').strip()  #
 
 @app.route('/getQuote', methods=['POST'])
 def decrypt_payload():
     data = request.json
-    encryptMsg = data.get('enM')
-    encryptID = data.get('enI')
+    param = data.get('param')
+    encryptMsg, encryptID = param.split('@PWA', 1)
+    # encryptMsg = data.get('enM')
+    # encryptID = data.get('enI')
     reSubmit = data.get('reSubmit')
 
     if not encryptMsg or not encryptID:
@@ -111,8 +113,8 @@ def decrypt_payload():
     try:
         decrypted_time = decrypt(encryptMsg).strip()
         decrypted_device_id = decrypt(encryptID).strip()
-        #print(f"Decrypted Device ID: {decrypted_device_id}")
-        #print(f"Decrypted Timestamp: {decrypted_time}")
+        print(f"Decrypted Device ID: {decrypted_device_id}")
+        print(f"Decrypted Timestamp: {decrypted_time}")
     except Exception as e:
         return jsonify({'error': 'Invalid Data'}), 400
 
@@ -121,7 +123,9 @@ def decrypt_payload():
     #print(type(current_time))
     #print(len(decrypted_time))
     #print(len(str(current_time)))
-    if current_time > int(decrypted_time):
+    threshold = 1*24*60*60 * 1000
+    print("Current Time: ", current_time)
+    if current_time  < int(decrypted_time) + threshold :
         return jsonify({'error': 'Expired'}), 400
 
     conn = sqlite3.connect('device_access.db')
@@ -140,7 +144,7 @@ def decrypt_payload():
             hours, remainder = divmod(time_until_reset.seconds, 3600)
             minutes, _ = divmod(remainder, 60)
             return jsonify({
-                'error': 'API access limit reached',
+                'error': 'Access limit reached',
                 'retry_after': f'{hours} hours {minutes} minutes'
             }), 429
 
