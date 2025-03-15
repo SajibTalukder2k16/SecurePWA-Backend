@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 15 15:39:38 2025
+
+@author: sajib
+"""
+
 import pandas as pd
 import random
 import string
@@ -40,17 +48,20 @@ SECRET_KEY = "lhoiyrtevcyrtfvs"
 IV = "usrqutsvbxcjpoyt"
 mcrypt = MCrypt(SECRET_KEY, IV)
 
-def generate_data(num_devices, min_requests, max_requests):
+def generate_data(num_devices, num_unique_devices, num_unique_timestamps, min_requests, max_requests):
     data_list = []
     current_time = datetime.datetime.now()
     end_time = current_time + datetime.timedelta(hours=20)
     
+    unique_device_ids = [generate_device_id() for _ in range(num_unique_devices)]
+    unique_timestamps = [current_time + datetime.timedelta(seconds=random.randint(0, 72000)) for _ in range(num_unique_timestamps)]
+    
     for _ in range(num_devices):
-        device_id = generate_device_id()
+        device_id = random.choice(unique_device_ids)  # Duplicate some device IDs
         num_requests = random.randint(min_requests, max_requests)
         
         for _ in range(num_requests):
-            timestamp = current_time + datetime.timedelta(seconds=random.randint(0, 72000)) # Spread requests over 20 hours
+            timestamp = random.choice(unique_timestamps)  # Duplicate timestamps as well
             hour = timestamp.hour
             
             # Peak hours adjustment
@@ -81,12 +92,12 @@ def plot_data(df):
     plt.plot(request_counts.index, request_counts.values, marker='o', linestyle='-', color='b')
     plt.xlabel("Hour")
     plt.ylabel("Number of Requests")
-    plt.title("Request Distribution Over 20 Hours")
+    plt.title("Request Distribution Over 20 Hours (With Duplicate Device IDs & Timestamps)")
     plt.xticks(range(0, 24))
     plt.grid()
     plt.show()
     
-    # Plot first two devices
+    # Plot first two unique devices
     unique_devices = df['deviceId'].unique()[:2]
     for device in unique_devices:
         device_df = df[df['deviceId'] == device]
@@ -102,12 +113,14 @@ def plot_data(df):
         plt.show()
 
 if __name__ == "__main__":
-    num_devices = int(input("Enter number of devices: "))
+    num_devices = int(input("Enter total number of device entries: "))
+    num_unique_devices = int(input("Enter number of unique device IDs: "))
+    num_unique_timestamps = int(input("Enter number of unique timestamps: "))
     min_requests = int(input("Enter minimum requests per device: "))
     max_requests = int(input("Enter maximum requests per device: "))
     
-    df = generate_data(num_devices, min_requests, max_requests)
-    csv_filename = "encrypted_params.csv"
+    df = generate_data(num_devices, num_unique_devices, num_unique_timestamps, min_requests, max_requests)
+    csv_filename = "encrypted_params_with_duplicates_device_timestamp.csv"
     df.to_csv(csv_filename, index=False)
     print(f"Data saved to {csv_filename}")
     

@@ -160,6 +160,23 @@ def is_hex(s):
     except ValueError:
         return False
 
+def decrypt_v1(encrypted_text):
+    if not is_hex(encrypted_text):
+        raise ValueError("Non-base16 digit found in encrypted text")
+
+    cipher = AES.new(SECRET_KEY, AES.MODE_CBC, IV)
+    decrypted = cipher.decrypt(base64.b16decode(encrypted_text.upper()))
+    print(decrypted)
+
+    # Properly remove AES PKCS7 padding
+    try:
+        decrypted = unpad(decrypted, AES.block_size)  # Remove padding
+    except ValueError:
+        raise ValueError("Decryption error: Invalid padding")
+    print(decrypted)
+
+    return decrypted.decode('utf-8').strip()
+
 def decrypt(encrypted_text):
     if not is_hex(encrypted_text):
         raise ValueError("Non-base16 digit found in encrypted text")
@@ -175,6 +192,8 @@ def decrypt_payload():
     param = data.get('param')
     try:
         decryptedMsg = decrypt(param).strip()
+        print(param)
+        print(decryptedMsg)
     except Exception as e:
         return jsonify({'error': 'Invalid Data'}), 400
     decrypted_time, decrypted_device_id = decryptedMsg.split('@PWA')
