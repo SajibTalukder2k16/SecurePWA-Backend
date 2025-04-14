@@ -107,7 +107,7 @@ if __name__ == "__main__":
     max_requests = int(input("Enter maximum requests per device: "))
     
     df = generate_data(num_devices, min_requests, max_requests)
-    csv_filename = "encrypted_params.csv"
+    csv_filename = "encrypted_params_1.csv"
     df.to_csv(csv_filename, index=False)
     print(f"Data saved to {csv_filename}")
     

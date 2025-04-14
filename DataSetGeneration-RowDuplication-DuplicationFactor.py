@@ -115,7 +115,7 @@ if __name__ == "__main__":
     duplication_factor = int(input("Enter row duplication factor: "))
     
     df = generate_data(num_devices, num_unique_entries, min_requests, max_requests, duplication_factor)
-    csv_filename = "encrypted_params_with_full_duplicates.csv"
+    csv_filename = "CSV/row-duplicate-1.csv"
     df.to_csv(csv_filename, index=False)
     print(f"Data saved to {csv_filename}")
     

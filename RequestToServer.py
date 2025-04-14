@@ -16,11 +16,12 @@ import matplotlib.pyplot as plt
 API_URL = "http://localhost:5001/getQuote"
 
 # Load the encrypted dataset
-csv_file = "encrypted_params_with_duplicates.csv"  # Change if needed
+csv_file = "CSV/device-4.csv" # Change if needed
 df = pd.read_csv(csv_file)
 
 # Output CSV for storing API responses
-output_file = "api_responses.csv"
+output_file = "CSV/OUTPUT-40/device-4.csv"
+
 
 # Initialize CSV file with headers
 with open(output_file, mode='w', newline='') as file:
@@ -91,3 +92,21 @@ plt.xlabel("Response Type")
 plt.ylabel("Count")
 plt.title("API Request Success vs Failure Count")
 plt.show()
+
+# Normalize case to handle inconsistencies
+response_df['normalized_message'] = response_df['response_message'].str.lower().str.strip()
+
+# Count each response category
+successful_requests = (response_df['normalized_message'] == 'success').sum()
+existing_data = (response_df['normalized_message'] == 'already existing data').sum()
+access_limit_reached = (response_df['normalized_message'] == 'access limit reached').sum()
+expired = (response_df['normalized_message'] == 'Expired').sum()
+total_requests = len(response_df)
+
+# Print summary
+print("\n--- Request Summary ---")
+print(f"Total Requests: {total_requests}")
+print(f"Successful Requests: {successful_requests}")
+print(f"Already Existing Data: {existing_data}")
+print(f"Access Limit Reached: {access_limit_reached}")
+print(f"Expired: {expired}")
