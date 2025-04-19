@@ -13,7 +13,7 @@ CORS(app)
 
 SECRET_KEY = b'lhoiyrtevcyrtfvs'
 IV = b'usrqutsvbxcjpoyt'
-API_REQUEST_LIMIT = 30
+API_REQUEST_LIMIT = 40
 DATABASE = 'quotes.db'
 DEVICE_ACCESS_DB = 'device_access.db'
 
@@ -187,4 +187,4 @@ def decrypt_payload():
 if __name__ == '__main__':
     init_db()  # Initialize the quotes database
     init_device_access_db()  # Initialize the device_access database
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5002, debug=True)

@@ -16,14 +16,15 @@ import matplotlib.pyplot as plt
 import os
 
 # Set these dynamically as needed
-num_users = 100
-num_devices = 30
+num_users = 200
+threshold = 40
+
 
 # Construct dynamic paths
-base_dir = f"DataSet_V2_Generator/Benign/CSV/{num_users}/Output/{num_devices}"
+base_dir = f"DataSet_V2_Generator/Benign/CSV/{num_users}/Output/{threshold}"
 input_file = f"DataSet_V2_Generator/Benign/CSV/{num_users}/{num_users}.csv"
-output_file = os.path.join(base_dir, f"{num_users}_{num_devices}_output.csv")
-plot_file = os.path.join(base_dir, f"result_{num_users}_{num_devices}.png")
+output_file = os.path.join(base_dir, f"{num_users}_{threshold}_output.csv")
+plot_file = os.path.join(base_dir, f"result_{num_users}_{threshold}.png")
 
 # Ensure output directory exists
 os.makedirs(base_dir, exist_ok=True)
@@ -32,7 +33,7 @@ os.makedirs(base_dir, exist_ok=True)
 
 
 # Flask API URL
-API_URL = "http://localhost:5001/getQuote"
+API_URL = "http://localhost:5002/getQuote"
 
 # Load the encrypted dataset
 df = pd.read_csv(input_file)
