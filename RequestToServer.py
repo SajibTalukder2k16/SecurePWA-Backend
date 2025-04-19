@@ -16,17 +16,17 @@ import matplotlib.pyplot as plt
 API_URL = "http://localhost:5001/getQuote"
 
 # Load the encrypted dataset
-csv_file = "CSV/device-4.csv" # Change if needed
+csv_file = "DataSet_V2_Generator/Benign/CSV/500/500.csv" # Change if needed
 df = pd.read_csv(csv_file)
 
 # Output CSV for storing API responses
-output_file = "CSV/OUTPUT-40/device-4.csv"
+output_file = "DataSet_V2_Generator/Benign/CSV/500/Output/30/500_30_output.csv"
 
 
 # Initialize CSV file with headers
 with open(output_file, mode='w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(["deviceID", "timestamp", "response_status", "response_message", "raw_response"])
+    writer.writerow(["user_id", "deviceID", "timestamp", "response_status", "response_message", "raw_response"])
 
 # Process each row and send API requests
 responses = []
@@ -45,7 +45,7 @@ for index, row in df.iterrows():
         response = requests.post(API_URL, json=payload, headers=headers, timeout=5)
         
         # Log raw response
-        print(f"Response [{index+1}/{len(df)}]: Status Code: {response.status_code}, Response Text: {response.text}")
+        #print(f"Response [{index+1}/{len(df)}]: Status Code: {response.status_code}, Response Text: {response.text}")
 
         # Check if response is empty
         if not response.text.strip():
@@ -67,11 +67,11 @@ for index, row in df.iterrows():
         response_data = None
 
     # Append response to CSV and list
-    responses.append([row["deviceId"], row["timestamp"], status_code, message, response_data])
+    responses.append([row["user_id"],row["deviceId"], row["timestamp"], status_code, message, response_data])
     
     with open(output_file, mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([row["deviceId"], row["timestamp"], status_code, message, response_data])
+        writer.writerow([row["user_id"],row["deviceId"], row["timestamp"], status_code, message, response_data])
     
     # Delay to prevent overwhelming the server
     time.sleep(0.1)
@@ -79,7 +79,7 @@ for index, row in df.iterrows():
 print(f"\nAll API responses saved to {output_file}")
 
 # Convert to DataFrame for plotting
-response_df = pd.DataFrame(responses, columns=["deviceID", "timestamp", "response_status", "response_message", "raw_response"])
+response_df = pd.DataFrame(responses, columns=["user_id","deviceID", "timestamp", "response_status", "response_message", "raw_response"])
 
 # Count successful and failed requests
 success_count = sum(response_df["response_status"] == 200)
@@ -91,6 +91,7 @@ plt.bar(["Success", "Failure"], [success_count, failure_count], color=['green', 
 plt.xlabel("Response Type")
 plt.ylabel("Count")
 plt.title("API Request Success vs Failure Count")
+plt.savefig("DataSet_V2_Generator/Benign/CSV/500/Output/30/result_500_30.png")
 plt.show()
 
 # Normalize case to handle inconsistencies
