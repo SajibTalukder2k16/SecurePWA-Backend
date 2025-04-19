@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 import os
 
 # Set these dynamically as needed
-num_users = 200
-threshold = 40
+num_users = 400
+threshold = 30
 
 
 # Construct dynamic paths

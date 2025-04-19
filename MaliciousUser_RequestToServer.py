@@ -13,9 +13,9 @@ import csv
 import matplotlib.pyplot as plt
 
 # ===================== Configurable Parameters =====================
-num_users = 300
+num_users = 500
 devices = 20
-threshold = 40
+threshold = 30
 
 API_URL = "http://localhost:5002/getQuote"
 
