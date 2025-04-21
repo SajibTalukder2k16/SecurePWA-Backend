@@ -13,7 +13,7 @@ CORS(app)
 
 SECRET_KEY = b'lhoiyrtevcyrtfvs'
 IV = b'usrqutsvbxcjpoyt'
-API_REQUEST_LIMIT = 30
+API_REQUEST_LIMIT = 45
 DATABASE = 'quotes.db'
 DEVICE_ACCESS_DB = 'device_access.db'
 

@@ -20,7 +20,7 @@ import os
 
 # Set parameters
 num_devices = 500
-num_unique_devices = 30
+num_unique_devices = 20
 min_requests = 25
 max_requests = 45
 

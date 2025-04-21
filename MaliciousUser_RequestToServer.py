@@ -13,14 +13,15 @@ import csv
 import matplotlib.pyplot as plt
 
 # ===================== Configurable Parameters =====================
-num_users = 500
-devices = 20
+num_users = 20
+devices = 5
 threshold = 30
 
 API_URL = "http://localhost:5002/getQuote"
 
+
 # ===================== Dynamic Paths ================================
-base_dir = f"DataSet_V2_Generator/Malicious_User/User_{num_users}/Attack_Device_{devices}"
+base_dir = f"DataSetForSmallNumber/Malicious/Input/User_{num_users}/Attack_Device_{devices}"
 input_csv = os.path.join(base_dir, f"{num_users}_{devices}.csv")
 output_dir = os.path.join(base_dir, f"Output/{threshold}")
 output_csv = os.path.join(output_dir, f"U{num_users}_D{devices}_T{threshold}_output.csv")

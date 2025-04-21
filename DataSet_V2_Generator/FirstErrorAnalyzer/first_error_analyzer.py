@@ -9,8 +9,9 @@ Created on Sat Apr 19 15:59:58 2025
 import pandas as pd
 
 # === Configuration ===
-input_csv = "DataSet_V2_Generator/Benign/CSV/500/Output/30/500_30_output.csv"  # Replace with your actual file path
-output_excel = "DataSet_V2_Generator/Benign/CSV/500/Output/30/B_500_30_first_error_requests_with_number.xlsx"
+
+input_csv = "V1_500_10/U500_D10_T30_output.csv"  # Replace with your actual file path
+output_excel = "V1_500_10/output/M_500_10_30_first_error_requests_with_number.xlsx"
 
 
 # === Load Data ===

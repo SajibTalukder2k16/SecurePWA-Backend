@@ -16,13 +16,13 @@ import matplotlib.pyplot as plt
 import os
 
 # Set these dynamically as needed
-num_users = 400
-threshold = 30
+num_users = 20
+threshold = 45
 
 
 # Construct dynamic paths
-base_dir = f"DataSet_V2_Generator/Benign/CSV/{num_users}/Output/{threshold}"
-input_file = f"DataSet_V2_Generator/Benign/CSV/{num_users}/{num_users}.csv"
+base_dir = f"DataSetForSmallNumber/Benign/{num_users}/Output/{threshold}"
+input_file = f"DataSetForSmallNumber/Benign/{num_users}/{num_users}.csv"
 output_file = os.path.join(base_dir, f"{num_users}_{threshold}_output.csv")
 plot_file = os.path.join(base_dir, f"result_{num_users}_{threshold}.png")
 
